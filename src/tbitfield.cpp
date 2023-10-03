@@ -216,18 +216,19 @@ TBitField TBitField::operator&(const TBitField &bf) // операция "и"
 
 TBitField TBitField::operator~() // отрицание
 {
-    for (int i = 0; i < bitLen; i++)
+    uint num = 0;
+    TBitField newbf(bitLen);
+    for (int i = 0; i < memLen - 1; i++)
     {
-        if (getBit(i) == 0)
-        {
-            setBit(i);
-        }
-        else
-        {
-            clrBit(i);
-        }
+        newbf.pMem[i] = ~pMem[i];
     }
-    return *this;
+    for (int i = 0; i < bitLen % (sizeof(uint) * 8); i++)
+    {
+        num = num + (1 << i);
+    }
+    newbf.pMem[memLen - 1] = pMem[memLen - 1] ^ num;
+    return newbf;
+    
 }
 
 TBitField::~TBitField()
@@ -238,19 +239,8 @@ TBitField::~TBitField()
 // ввод/вывод
 std::istream &operator>>(std::istream &istr, TBitField &bf) // ввод
 {
-    for (int i = 0; i < bf.bitLen; i++)
-    {
-        bool bit;
-        istr >> bit;
-        if (bit)
-        {
-            bf.setBit(i);
-        }
-        else
-        {
-            bf.clrBit(i);
-        }
-    }
+    char ss[255];
+    istr.getline(ss, 255);
     return istr;
 }
 
