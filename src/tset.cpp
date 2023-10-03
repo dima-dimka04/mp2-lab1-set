@@ -15,13 +15,13 @@ TSet::TSet(size_t mp) : bitField(mp) {
 }
 
 // конструктор копирования
-TSet::TSet(const TSet &s) : bitField(s.maxPower) {
-    maxPower = s.bitField.getLength();
+TSet::TSet(const TSet &s) : bitField(s.bitField) {
+    maxPower = s.maxPower;
     bitField = s.bitField;
 }
 
 // конструктор преобразования типа
-TSet::TSet(const TBitField &bf) : bitField(bf.getLength()) {
+TSet::TSet(const TBitField &bf) : bitField(bf) {
     bitField = bf;
     maxPower = bf.getLength();
 }
@@ -48,20 +48,20 @@ void TSet::insElem(const uint elem) // включение элемента мн�
 
 void TSet::delElem(const uint elem) // исключение элемента множества
 {
-      bitField.clrBit(elem);
+     bitField.clrBit(elem);
 }
 
 // теоретико-множественные операции
 TSet& TSet::operator=(const TSet &s) // присваивание
 {   
     bitField = s.bitField;
-    maxPower = s.getMaxPower();
+    maxPower = s.maxPower;
     return *this;
 }
 
 bool TSet::operator==(const TSet &s) const // сравнение
 {
-    if (maxPower != s.getMaxPower())
+    if (maxPower != s.maxPower)
     {
         return false;
     }
@@ -80,7 +80,7 @@ bool TSet::operator==(const TSet &s) const // сравнение
 
 bool TSet::operator!=(const TSet &s) const // сравнение
 {
-    if (maxPower != s.getMaxPower()) { return true; }
+    if (maxPower != s.maxPower) { return true; }
     else
     {
         for (int i = 0; i < maxPower; i++)
@@ -128,20 +128,14 @@ TSet TSet::operator-(const uint elem) // разность с элементом
 
 TSet TSet::operator*(const TSet &s) // пересечение
 {
-    if (maxPower > s.getMaxPower())
+    uint new_mp = maxPower;
+    if (s.maxPower > maxPower)
     {
-        TBitField nbf(maxPower);
-        nbf = bitField & s.bitField;
-        TSet news(nbf);
-        return news;
+        new_mp = s.maxPower;
     }
-    else
-    {
-        TBitField nbf(s.getMaxPower());
-        nbf = bitField & s.bitField;
-        TSet news(nbf);
-        return news;
-    }
+    TSet news(new_mp);
+    news = bitField & s.bitField;
+    return news;
 }
 
 TSet TSet::operator~() // дополнение
