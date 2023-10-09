@@ -197,7 +197,7 @@ TBitField TBitField::operator&(const TBitField& bf) // операция "и"
     if (bitLen < bf.bitLen)
     {
         TBitField b(bf.bitLen);
-        for (int i = 0; i < bf.bitLen; i++)
+        for (int i = 0; i < memLen; i++)
         {
             b.pMem[i] = pMem[i] & bf.pMem[i];
         }
@@ -224,7 +224,7 @@ TBitField TBitField::operator~() // отрицание
     }
     for (int i = 0; i < bitLen % (sizeof(myuint) * 8); i++)
     {
-        num = num + (1 << i);
+        num += (myuint)1 << i;
     }
     newbf.pMem[memLen - 1] = pMem[memLen - 1] ^ num;
     return newbf;
